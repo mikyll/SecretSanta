@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define VERSION 1
+#define VERSION "0.2"
 #define MAX_PARTECIPANTS 100
 #define MAX_NAME_LENGTH 64
 
@@ -11,7 +11,7 @@ int duplicateCheck(char lista[MAX_PARTECIPANTS][MAX_NAME_LENGTH], int n);
 
 int main(int argc, char ** argv)
 {
-	printf("SECRET SANTA v%d\n\n\n", VERSION);
+	printf("SECRET SANTA v%s\n\n\n", VERSION);
 
 	// parameters check
 	if (argc != 1)
@@ -45,6 +45,7 @@ int main(int argc, char ** argv)
 			strcpy(partecipants[i], tmp_name);
 			n_partecipants++;
 		}
+		
 
 		// CHECK LIST ERRORS
 		if (n_partecipants < 4)
@@ -70,36 +71,60 @@ int main(int argc, char ** argv)
 	} while (input[0] != 'y' && input[0] != 'Y');
 
 
-	// RANDOMIZE    
-	// fill an array with partecipant indexes
-	for (i = 0; i < n_partecipants; i++)
+	// array con gli indici del partecipante a cui si deve fare il regalo
+	for (i = 0; i < n_partecipanti; i++)
 		secretSanta[i] = i;
 
-	// shuffle array (skipping same indexes - CARE, IT DOESN'T SCALE!)
+	// shuffle array (senza indici corrispondenti)
 	do
 	{
-		for (i = 0, ok = 1; i < n_partecipants; i++)
+		for (i = 0; i < n_partecipanti; i++)
 		{
 			int temp = secretSanta[i];
-			int randomIndex = rand() % n_partecipants;
+			int randomIndex = rand() % n_partecipanti;
 
-			if (temp == randomIndex)
+			secretSanta[i] = secretSanta[randomIndex];
+			secretSanta[randomIndex] = temp;
+		}
+		// check duplicati
+		for (i = 0, ok = 1; i < n_partecipanti; i++)
+		{
+			if (secretSanta[i] == i)
 			{
 				ok = 0;
 				break;
 			}
-			secretSanta[i] = secretSanta[randomIndex];
-			secretSanta[randomIndex] = temp;
 		}
 	} while (!ok);
 
 	// SECRET SANTA
-	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSECRET SANTA:\n");
-	for (i = 0; i < n_partecipants; i++)
+	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSECRET SANTA:\n");
+	for (i = 0; i < n_partecipanti; i++)
 	{
-		printf("%s\t must make a gift to %s\n", partecipants[i], partecipants[secretSanta[i]]);
+		printf("%s\tfa il regalo a %s\n", partecipanti[i], partecipanti[secretSanta[i]]);
 	}
 
+	printf("\n\nScrivere il contenuto su file? [s/n]\n");
+	scanf("%s", input);
+	if (input[0] == 's' || input[0] == 'S' || input[0] == 'y' || input[0] == 'Y')
+	{
+		FILE *f;
+
+		if ((f = fopen("SecretSanta.txt", "w")) == NULL)
+		{
+			printf("Errore nella creazione del file.\n");
+			return -1;
+		}
+
+		for (i = 0; i < n_partecipanti; i++)
+		{
+			fprintf(f, "%s\t fa il regalo a %s\n", partecipanti[i], partecipanti[secretSanta[i]]);
+		}
+
+		fclose(f);
+	}
+
+	printf("\nPress 'ENTER' to quit\n");
 	getchar();
 	getchar();
 	return 0;
