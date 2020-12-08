@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
 
 	// INIZIALIZATION
 	char partecipants[MAX_PARTECIPANTS][MAX_NAME_LENGTH];
-	char input[8];
+	char input[MAX_NAME_LENGTH];
 	int i, n_partecipants = 0, ok;
 	int secretSanta[MAX_PARTECIPANTS];
 
@@ -30,7 +30,7 @@ int main(int argc, char ** argv)
 	// MENU    
 	do
 	{
-		printf("Enter partecipant names ('OK' to finish):\n");
+		printf("Enter partecipant names ('ok' to finish, 'exit' to quit):\n");
 
 		for (i = 0; i < MAX_PARTECIPANTS; i++)
 		{
@@ -39,8 +39,10 @@ int main(int argc, char ** argv)
 			printf("%d) ", i + 1);
 			scanf("%s", &tmp_name);
 
-			if (strcmp(tmp_name, "OK") == 0 || strcmp(tmp_name, "ok") == 0 || tmp_name[0] == '\0')
+			if (strcmp(tmp_name, "ok") == 0 || strcmp(tmp_name, "OK") == 0 || tmp_name[0] == '\0')
 				break;
+			if (strcmp(tmp_name, "exit") == 0 || strcmp(tmp_name, "EXIT") == 0 || strcmp(tmp_name, "quit") == 0 || strcmp(tmp_name, "QUIT") == 0)
+				return 0;
 
 			strcpy(partecipants[i], tmp_name);
 			n_partecipants++;
@@ -70,24 +72,24 @@ int main(int argc, char ** argv)
 		scanf("%s", input);
 	} while (input[0] != 'y' && input[0] != 'Y');
 
-
-	// array con gli indici del partecipante a cui si deve fare il regalo
-	for (i = 0; i < n_partecipanti; i++)
+	// RANDOMIZE
+	// array filled with result index
+	for (i = 0; i < n_partecipants; i++)
 		secretSanta[i] = i;
 
-	// shuffle array (senza indici corrispondenti)
+	// shuffle array
 	do
 	{
-		for (i = 0; i < n_partecipanti; i++)
+		for (i = 0; i < n_partecipants; i++)
 		{
 			int temp = secretSanta[i];
-			int randomIndex = rand() % n_partecipanti;
+			int randomIndex = rand() % n_partecipants;
 
 			secretSanta[i] = secretSanta[randomIndex];
 			secretSanta[randomIndex] = temp;
 		}
-		// check duplicati
-		for (i = 0, ok = 1; i < n_partecipanti; i++)
+		// check duplicates
+		for (i = 0, ok = 1; i < n_partecipants; i++)
 		{
 			if (secretSanta[i] == i)
 			{
@@ -99,14 +101,14 @@ int main(int argc, char ** argv)
 
 	// SECRET SANTA
 	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSECRET SANTA:\n");
-	for (i = 0; i < n_partecipanti; i++)
+	for (i = 0; i < n_partecipants; i++)
 	{
-		printf("%s\tfa il regalo a %s\n", partecipanti[i], partecipanti[secretSanta[i]]);
+		printf("%s\tmakes a gift for %s\n", partecipants[i], partecipants[secretSanta[i]]);
 	}
 
-	printf("\n\nScrivere il contenuto su file? [s/n]\n");
+	printf("\n\nWrite the results on file? [y/n]\n");
 	scanf("%s", input);
-	if (input[0] == 's' || input[0] == 'S' || input[0] == 'y' || input[0] == 'Y')
+	if (input[0] == 'y' || input[0] == 'Y')
 	{
 		FILE *f;
 
@@ -116,9 +118,9 @@ int main(int argc, char ** argv)
 			return -1;
 		}
 
-		for (i = 0; i < n_partecipanti; i++)
+		for (i = 0; i < n_partecipants; i++)
 		{
-			fprintf(f, "%s\t fa il regalo a %s\n", partecipanti[i], partecipanti[secretSanta[i]]);
+			fprintf(f, "%s\tmakes a gift for %s\n", partecipants[i], partecipants[secretSanta[i]]);
 		}
 
 		fclose(f);
