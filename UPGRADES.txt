@@ -1,0 +1,5 @@
+Upgrades:
+
+-dinamically created array for 'participants' and 'secretSanta';
+-make the function 'invalidSantaCheck', used in the 2nd algorithm return an array of index (using a struct(?)), so it doesn't have to cycle again by zero everytime;
+-test the efficiency
