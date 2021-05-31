@@ -1,12 +1,20 @@
 /*
+*
 *	This software is provided 'as-is', without any express or implied
 *	warranty. In no event will the authors be held liable for any damages
 *	arising from the use of this software.
 *	Permission is granted to anyone to use this software for any purpose,
 *	including commercial applications, and to alter it and redistribute it
 *	freely.
-*
-*
+*	
+*	-------------------------------------------------------------------------------------------------------
+*	
+*	USAGE:
+*	./secretSanta	      -	normal execution: you have to specify at least 4 participants to make a list
+*				and confirm("ok"). Then the application shuffle that list and assign a person
+*				to whom give the gift to everyone.
+*				Finally it is possible to print the results into a file, to save them.
+*				
 */
 
 #include <stdio.h>
